@@ -4,15 +4,6 @@ class Topic < ActiveRecord::Base
 
   counter :mentions_count
 
-  counter :word_count
-  sorted_set :ranked_words
-
-  counter :hashtag_count
-  sorted_set :ranked_hashtags
-
-  counter :user_count
-  sorted_set :ranked_users
-
   # MENTIONS
 
   def increment_mentions
@@ -23,69 +14,116 @@ class Topic < ActiveRecord::Base
     mentions_count.value
   end
 
-  # WORDS
+  def redis_prefix
+    "topics:#{id}"
+  end
 
-  def increment_words(words)
-    words.each do |word|
-      word_count.increment
-      ranked_words[word] += 1
+  def component_occurence_keys(component)
+    redis.keys([redis_prefix, component, "*"].join(":"))
+  end
+
+  def component_occurences(component)
+    component_occurence_keys(component).size
+  end
+
+  def user_occurences
+    component_occurences("users")
+  end
+
+  def user_occurence_keys
+    component_occurence_keys("users")
+  end
+
+  def hashtag_occurence_keys
+    component_occurence_keys("hashtags")
+  end
+
+  def url_occurence_keys
+    component_occurence_keys("urls")
+  end
+
+  def users
+    user_occurence_keys.map do |occurence|
+      occurence.split(":")[3]
+    end.uniq.map do |user|
+      User.new(user, self)
     end
   end
 
-  def top_words(n = 10)
-    top = ranked_words.revrange(0,n)
-    top.map { |word| Word.new(word, self).as_json}
-  end
-
-  def word_score(word)
-    ranked_words[word] / word_count.value.to_f
-  end
-
-  # HASHTAGS
-
-  def increment_hashtags(hashtags)
-    hashtags.each do |hashtag|
-      hashtag_count.increment
-      ranked_hashtags[hashtag] += 1
+  def hashtags
+    hashtag_occurence_keys.map do |occurence|
+      occurence.split(":")[3]
+    end.uniq.map do |hashtag|
+      Hashtag.new(hashtag, self)
     end
   end
 
-  def hashtag_score(hashtag)
-    (ranked_hashtags[hashtag] / hashtag_count.value.to_f)
-  end
-
-  def top_hashtags(n = 10)
-    top = ranked_hashtags.revrange(0,n)
-    top.map { |hashtag| Hashtag.new(hashtag, self).as_json}
-  end
-
-  # USERS
-
-  def increment_users(users)
-    users.each do |user|
-      user_count.increment
-      ranked_users[user] += 1
+  def urls
+    url_occurence_keys.map do |occurence|
+      occurence.split(":")[3]
+    end.uniq.map do |url|
+      Url.new(url, self)
     end
-  end
-
-  def user_score(user)
-    (ranked_users[user] / user_count.value.to_f)
   end
 
   def top_users(n = 10)
-    top = ranked_users.revrange(0,n)
-    top.map { |user| User.new(user, self).as_json}
+    users.sort_by {|user| user.occurences}.last(n).reverse
   end
 
-  def as_json
+  def top_hashtags(n = 10)
+    hashtags.sort_by {|hashtag| hashtag.occurences}.last(n).reverse
+  end
+
+  def top_urls(n = 10)
+    urls.sort_by {|url| url.occurences}.last(n).reverse
+  end
+
+  def save_user_occurence(user_occurence)
+    User.new("@" + user_occurence, self).save_occurence
+  end
+
+  def save_hashtag_occurence(hashtag_occurence)
+    Hashtag.new("#" + hashtag_occurence, self).save_occurence
+  end
+
+  def save_url_occurence(url_occurence)
+    Url.new(url_occurence, self).save_occurence
+  end
+
+  def process_tweet(tweet)
+    increment_mentions
+    tweet.hashtags.each do |hashtag|
+      save_hashtag_occurence(hashtag)
+    end
+    tweet.users.each do |user|
+      save_user_occurence(user)
+    end
+    tweet.urls.each do |url|
+      save_url_occurence(url)
+    end
+  end
+
+  def as_json(x = nil)
     {
       id: id,
       name: name,
-      mentions: mentions,
-      topWords: top_words,
-      topUsers: top_users,
-      topHashtags: top_hashtags,
+      data: {
+        mentions: mentions,
+        topUsers: top_users.map(&:as_json),
+        topHashtags: top_hashtags.map(&:as_json),
+        topUrls: top_urls.map(&:as_json),
+      }
     }
+  end
+
+  def streaming_daemon_name
+    "tweet_streamer_#{id}"
+  end
+
+  def streaming(command)
+    raise ArguementError unless ['restart', 'start', 'stop', 'status'].include? command
+    p "#{command}ing #{streaming_daemon_name} for #{name}"
+    system("ruby #{TWEET_STREAM_DAEMON_PATH} #{command} #{name}")
   end
 
 end

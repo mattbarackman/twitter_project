@@ -1,12 +1,15 @@
 var ListItem = React.createClass({
   propTypes: {
     value: React.PropTypes.string,
-    score: React.PropTypes.number
+    score: React.PropTypes.number,
+    link: React.PropTypes.string
   },
   render: function() {
     return (
       <li>
-        <span> {this.props.value}</span>
+        <p className="bg-info">
+          <a href={this.props.link}>{this.props.value}</a>
+        </p>
       </li>
     );
   }

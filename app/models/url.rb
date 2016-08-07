@@ -1,15 +1,37 @@
 class Url
 
+  TTL = 300
+
   attr_reader :value, :topic
 
-  def initialize(value, topic)
-    @value = value
+  include Redis::Objects
+
+  counter :next_occurence_id, global: true
+
+  def initialize(url, topic)
+    @value = url
     @topic = topic
   end
 
-  def link
-    @value
+  def redis_prefix
+    [topic.redis_prefix, "urls", value].join(":")
   end
+
+  def occurences
+    key = [redis_prefix, "*"].join(":")
+    redis.keys(key).count
+  end
+
+  def save_occurence
+    key = [redis_prefix, next_occurence_id.increment].join(":")
+    redis.set(key,  true)
+    redis.expire(key,  TTL)
+  end
+
+  def link
+    value
+  end
+
 
   def to_s
     if value.length > 40
@@ -20,18 +42,18 @@ class Url
   end
 
   def id
-    @id ||= Digest::MD5.hexdigest(@value + @topic.name)
+    @id ||= Digest::MD5.hexdigest(value + topic.name)
   end
 
   def score
-    topic.url_score(value)
+    occurences / topic.url_occurences.to_f
   end
 
   def as_json
     {
       id: id,
       value: to_s,
-      score: score,
+      score: occurences,
       link: link
     }
   end

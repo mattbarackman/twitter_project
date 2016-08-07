@@ -1,38 +1,59 @@
-class Word
+# class Word
 
-  attr_reader :value, :topic
+#   TTL = 60
 
-  def initialize(value, topic)
-    @value = value
-    @topic = topic
-  end
+#   include Redis::Objects
 
-  def link
-    URI.encode("https://twitter.com/search?q=#{value}")
-  end
+#   counter :next_id
 
-  def without_symbol
-    value[1..-1]
-  end
+#   attr_reader :value, :topic
 
-  def to_s
-    value
-  end
+#   def initialize(value, topic)
+#     @value = value
+#     @topic = topic
+#   end
 
-  def id
-    @id ||= Digest::MD5.hexdigest(@value + @topic.name)
-  end
+#   def current_count
+#     redis.keys("#{redis_prefix}:*").count
+#   end
 
-  def score
-    topic.word_score(value)
-  end
+#   def link
+#     URI.encode("https://twitter.com/search?q=#{value}")
+#   end
 
-  def as_json
-    {
-      id: id,
-      value: value,
-      score: score
-    }
-  end
+#   def without_symbol
+#     value[1..-1]
+#   end
 
-end
+#   def to_s
+#     value
+#   end
+
+#   def id
+#     @id ||= Digest::MD5.hexdigest(@value + @topic.name)
+#   end
+
+#   def score
+#     topic.word_score(value)
+#   end
+
+#   def as_json
+#     {
+#       id: id,
+#       value: value,
+#       score: score,
+#       link: link
+#     }
+#   end
+
+#   def redis_prefix
+#     "#{topic.redis_prefix}:#{word}"
+#   end
+
+#   def save()
+#     next_id.increment
+#     REDIS.set(redis_key,  true)
+#     REDIS.expire(redis_key,  TTL)
+#   end
+
+# end
