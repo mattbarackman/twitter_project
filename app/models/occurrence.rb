@@ -18,7 +18,7 @@ class Occurrence < ActiveRecord::Base
 
   def occurrence_with_count_to_json
     {
-      id: Digest::MD5.hexdigest(value),
+      key: Digest::MD5.hexdigest(value),
       count: count,
       value: formatted_value,
       link: link

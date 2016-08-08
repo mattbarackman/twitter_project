@@ -6,7 +6,7 @@ var List = React.createClass({
   },
 
   renderList() {
-    return this.props.listItems.map( listItem => <ListItem key={listItem.id} value={listItem.value} count={listItem.count} link={listItem.link} /> );
+    return this.props.listItems.map( listItem => <ListItem key={listItem.key} value={listItem.value} count={listItem.count} link={listItem.link} /> );
   },
 
   render() {
