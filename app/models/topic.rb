@@ -1,4 +1,4 @@
-class Topic < ActiveRecord::Base
+class Topic < ApplicationRecord
 
   has_many :tweet_occurrences, :dependent => :destroy
   has_many :hashtag_occurrences, :dependent => :destroy

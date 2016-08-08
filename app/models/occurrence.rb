@@ -1,4 +1,4 @@
-class Occurrence < ActiveRecord::Base
+class Occurrence < ApplicationRecord
 
   TTL = 1.hour
 
