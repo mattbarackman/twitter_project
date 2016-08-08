@@ -1,0 +1,2 @@
+class TweetOccurrence < Occurrence
+end

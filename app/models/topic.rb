@@ -1,51 +1,50 @@
 class Topic < ActiveRecord::Base
 
-  has_many :occurrences, :as => :occurrable, :dependent => :destroy
+  has_many :tweet_occurrences, :dependent => :destroy
+  has_many :hashtag_occurrences, :dependent => :destroy
+  has_many :url_occurrences, :dependent => :destroy
+  has_many :username_occurrences, :dependent => :destroy
 
-  has_many :topics_user_mentions, :dependent => :destroy
-  has_many :user_mentions, :through => :topics_user_mentions
+  def process_tweet!(tweet_info)
+    tweeted_at = tweet_info[:tweeted_at]
 
-  has_many :topics_urls, :dependent => :destroy
-  has_many :urls, :through => :topics_urls
+    tweet_occurrences.create(value: tweet_info[:twitter_id], tweeted_at: tweeted_at)
 
-  has_many :topics_hashtags, :dependent => :destroy
-  has_many :hashtags, :through => :topics_hashtags
+    tweet_info[:hashtags].each do |value|
+      hashtag_occurrences.create(value: value, tweeted_at: tweeted_at )
+    end
 
-  def recent_occurrence_count
-    occurrences.since(1.hour.ago).count
+    tweet_info[:urls].each do |value|
+      url_occurrences.create(value: value, tweeted_at: tweeted_at )
+    end
+
+    tweet_info[:usernames].each do |value|
+      username_occurrences.create(value: value, tweeted_at: tweeted_at )
+    end
   end
 
-  def top_recent_hashtags(n = 10)
-    topics_hashtags.
-      with_recent_occurrences.
-      select('count(*) as count, hashtag_id').
-      group('hashtag_id').
-      order('count DESC').
-      limit(n).map do |topics_hashtag|
-        topics_hashtag.hashtag.as_json.merge(count: topics_hashtag.count)
-      end
+  def top_recent_hashtags(timeAgo = 1.hour.ago, n = 10)
+    hashtag_occurrences
+      .since(timeAgo)
+      .top(n)
   end
 
-  def top_recent_urls(n = 10)
-    topics_urls.
-      with_recent_occurrences.
-      select('count(*) as count, url_id').
-      group('url_id').
-      order('count DESC').
-      limit(n).map do |topics_url|
-        topics_url.url.as_json.merge(count: topics_url.count)
-      end
+  def top_recent_urls(timeAgo = 1.hour.ago, n = 10)
+    url_occurrences
+      .since(timeAgo)
+      .top(n)
   end
 
-  def top_recent_user_mentions(n = 10)
-    topics_user_mentions.
-      with_recent_occurrences.
-      select('count(*) as count, user_mention_id').
-      group('user_mention_id').
-      order('count DESC').
-      limit(n).map do |topics_user_mention|
-        topics_user_mention.user_mention.as_json.merge(count: topics_user_mention.count)
-      end
+  def top_recent_usernames(timeAgo = 1.hour.ago, n = 10)
+    username_occurrences
+      .since(timeAgo)
+      .top(n)
+  end
+
+  def recent_tweet_count(timeAgo = 1.hour.ago)
+    tweet_occurrences
+      .since(timeAgo)
+      .count
   end
 
   def as_json(root = false)
@@ -54,17 +53,13 @@ class Topic < ActiveRecord::Base
         id: id,
         value: value,
         data: {
-          mentions: recent_occurrence_count,
-          topUserMentions: top_recent_user_mentions,
+          mentions: recent_tweet_count,
+          topUsernames: top_recent_usernames,
           topHashtags: top_recent_hashtags,
           topUrls: top_recent_urls,
         }
       }
     end
-  end
-
-  def streaming_daemon_name
-    "tweet_streamer_#{id}"
   end
 
 end
