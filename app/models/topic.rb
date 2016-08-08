@@ -5,6 +5,9 @@ class Topic < ActiveRecord::Base
   has_many :url_occurrences, :dependent => :destroy
   has_many :username_occurrences, :dependent => :destroy
 
+  validates_presence_of :value
+
+
   def process_tweet!(tweet_info)
     tweeted_at = tweet_info[:tweeted_at]
 
@@ -24,27 +27,19 @@ class Topic < ActiveRecord::Base
   end
 
   def top_recent_hashtags
-    hashtag_occurrences
-      .recent
-      .top
+    hashtag_occurrences.top_recent
   end
 
   def top_recent_urls
-    url_occurrences
-      .recent
-      .top
+    url_occurrences.top_recent
   end
 
   def top_recent_usernames
-    username_occurrences
-      .recent
-      .top
+    username_occurrences.top_recent
   end
 
   def recent_tweet_count
-    tweet_occurrences
-      .recent
-      .count
+    tweet_occurrences.recent.count
   end
 
   def link

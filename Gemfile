@@ -36,6 +36,9 @@ group :development, :test do
   gem 'rspec-rails'
   gem 'dotenv-rails'
   gem 'awesome_print'
+  gem 'factory_girl_rails'
+  gem 'faker'
+  gem 'shoulda-matchers'
 end
 
 group :development do
