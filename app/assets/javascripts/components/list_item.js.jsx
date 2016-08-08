@@ -8,7 +8,8 @@ var ListItem = React.createClass({
     return (
       <li>
         <p className="bg-info">
-          <a href={this.props.link}>{this.props.value} ({this.props.count})</a>
+          <a href={this.props.link}>{this.props.value}</a>
+          <span className="pull-right">{this.props.count}</span>
         </p>
       </li>
     );

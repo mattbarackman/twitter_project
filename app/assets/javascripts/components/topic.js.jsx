@@ -35,7 +35,7 @@ var Topic = React.createClass({
 
   render: function() {
     return (
-      <div className="row">
+      <div>
         <div className="row">
           <div className="col-md-12">
             <h1>
@@ -49,7 +49,7 @@ var Topic = React.createClass({
             <img className="img-rounded img-responsive" src={this.props.image_link}></img>
           </div>
           <div className="col-md-3">
-            <List title="Top Usernames" listItems={this.state.data.topUsernames}></List>
+            <List title="Top Users" listItems={this.state.data.topUsernames}></List>
           </div>
           <div className="col-md-3">
             <List title="Top Hashtags" listItems={this.state.data.topHashtags}></List>
