@@ -32,7 +32,7 @@ var Topic = React.createClass({
 
  componentDidMount: function() {
     this.loadTopicFromServer();
-    setInterval(this.loadTopicFromServer, 500);
+    setInterval(this.loadTopicFromServer, 1000);
   },
 
   render: function() {

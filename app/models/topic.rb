@@ -49,16 +49,18 @@ class Topic < ActiveRecord::Base
   end
 
   def as_json(root = false)
-    {
-      id: id,
-      value: value,
-      data: {
-        mentions: recent_occurrence_count,
-        topUserMentions: top_recent_user_mentions,
-        topHashtags: top_recent_hashtags,
-        topUrls: top_recent_urls,
+    Rails.cache.fetch("topics/#{id}/json", expires_in: 1.second) do
+      {
+        id: id,
+        value: value,
+        data: {
+          mentions: recent_occurrence_count,
+          topUserMentions: top_recent_user_mentions,
+          topHashtags: top_recent_hashtags,
+          topUrls: top_recent_urls,
+        }
       }
-    }
+    end
   end
 
   def streaming_daemon_name
