@@ -14,8 +14,6 @@ namespace :topics do
         hashtags = status.hashtags.map(&:text)
         urls = status.uris.select(&:expanded_url?).map(&:expanded_url).map(&:to_s)
 
-        p full_text
-
         topic_names.each do |topic_name|
 
           if full_text.include?(topic_name)
@@ -38,6 +36,10 @@ namespace :topics do
 
       end
     end
+  end
+
+  task :delete_old_occurrences => :environment do
+    Occurrence.delete_old
   end
 
 end
