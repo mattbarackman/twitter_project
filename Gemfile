@@ -7,8 +7,6 @@ gem 'rails', '~> 5.0.0'
 gem 'pg'
 gem 'redis', '~> 3.0'
 gem 'redis-rails'
-gem 'redis-persistence'
-gem 'redis-objects'
 
 # webserver
 gem 'puma', '~> 3.0'

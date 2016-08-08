@@ -95,7 +95,6 @@ GEM
     ffi (1.9.14)
     globalid (0.3.7)
       activesupport (>= 4.1.0)
-    hashr (0.0.22)
     http (1.0.4)
       addressable (~> 2.3)
       http-cookie (~> 1.0)
@@ -184,13 +183,6 @@ GEM
     redis-activesupport (5.0.1)
       activesupport (>= 3, < 6)
       redis-store (~> 1.2.0)
-    redis-objects (1.2.1)
-      redis (>= 3.0.2)
-    redis-persistence (0.1.0)
-      activemodel (> 3.0)
-      hashr (~> 0.0.19)
-      multi_json (~> 1.1)
-      redis (> 2)
     redis-rack (2.0.0.pre)
       rack (> 1.5, < 3)
       redis-store (~> 1.2.0.pre)
@@ -298,8 +290,6 @@ DEPENDENCIES
   rails (~> 5.0.0)
   react-rails
   redis (~> 3.0)
-  redis-objects
-  redis-persistence
   redis-rails
   rspec-rails
   sass-rails (~> 5.0)
