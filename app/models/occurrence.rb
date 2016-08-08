@@ -1,11 +1,13 @@
 class Occurrence < ActiveRecord::Base
 
+  TTL = 1.hour
+
   def self.recent
-    where("occurrences.tweeted_at >= '#{DEFAULT_EXPIRATION.ago}'")
+    where("occurrences.tweeted_at >= '#{TTL.ago}'")
   end
 
   def self.delete_old
-    where("tweeted_at < '#{DEFAULT_EXPIRATION}'").destroy_all
+    where("tweeted_at < '#{TTL.ago}'").destroy_all
   end
 
   def self.top(n = 10)
