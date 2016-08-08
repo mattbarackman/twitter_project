@@ -3,6 +3,7 @@ var Topic = React.createClass({
   propTypes: {
     id: React.PropTypes.number,
     value: React.PropTypes.string,
+    link: React.PropTypes.link,
     mentions: React.PropTypes.number,
     topUrls: React.PropTypes.array,
     topUsernames: React.PropTypes.array,
@@ -10,11 +11,8 @@ var Topic = React.createClass({
   },
 
   loadTopicFromServer: function() {
-
-    url = "/topics/" + this.props.id
-
     $.ajax({
-      url: url,
+      url: this.props.link,
       dataType: 'json',
       cache: false,
       success: function(topic) {
@@ -40,7 +38,9 @@ var Topic = React.createClass({
       <div className="row">
         <div className="row">
           <div className="col-md-3">
-            <h1>{this.props.value}</h1>
+            <h1>
+              <a href={this.props.link}>{this.props.value}</a>
+            </h1>
             <div>Mentions: {this.state.data.mentions}</div>
           </div>
           <div className="col-md-3">

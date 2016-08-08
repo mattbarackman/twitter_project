@@ -47,11 +47,16 @@ class Topic < ActiveRecord::Base
       .count
   end
 
+  def link
+    "/topics/#{id}"
+  end
+
   def as_json(root = false)
     Rails.cache.fetch("topics/#{id}/json", expires_in: 1.second) do
       {
         id: id,
         value: value,
+        link: link,
         data: {
           mentions: recent_tweet_count,
           topUsernames: top_recent_usernames,
