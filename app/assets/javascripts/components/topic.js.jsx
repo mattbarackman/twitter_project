@@ -37,11 +37,16 @@ var Topic = React.createClass({
     return (
       <div className="row">
         <div className="row">
-          <div className="col-md-3">
+          <div className="col-md-12">
             <h1>
               <a href={this.props.link}>{this.props.value}</a>
             </h1>
-            <div>Mentions: {this.state.data.mentions}</div>
+          </div>
+        </div>
+        <div className="row">
+          <div className="col-md-3">
+            <h2>Mentions: {this.state.data.mentions}</h2>
+            <img className="img-rounded img-responsive" src={this.props.image_link}></img>
           </div>
           <div className="col-md-3">
             <List title="Top Usernames" listItems={this.state.data.topUsernames}></List>

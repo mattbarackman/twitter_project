@@ -6,8 +6,8 @@ class UrlOccurrence < Occurrence
 
 
   def formatted_value
-    if value.length > 40
-      value[0..40]+"..."
+    if value.length > 25
+      value[0..25]+"..."
     else
       value
     end

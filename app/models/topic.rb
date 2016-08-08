@@ -51,12 +51,25 @@ class Topic < ActiveRecord::Base
     "/topics/#{id}"
   end
 
+  def image
+    Rails.application.assets.find_asset(value + ".jpg")
+  end
+
+  def image_link
+    if image
+      "/assets/#{image.logical_path}"
+    else
+      "/assets/default.jpg"
+    end
+  end
+
   def as_json(root = false)
     Rails.cache.fetch("topics/#{id}/json", expires_in: 1.second) do
       {
         id: id,
         value: value,
         link: link,
+        image_link: image_link,
         data: {
           mentions: recent_tweet_count,
           topUsernames: top_recent_usernames,
