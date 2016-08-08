@@ -3,13 +3,11 @@ require File.join(root, 'config', 'environment')
 
 log = File.join(root, 'log', 'stream.log')
 
-daemon = TweetStream::Daemon.new("tweet_streamer", log_output: true)
+client = TweetStream::Client.new
 
 topic_names = Topic.all.pluck(:value)
 
-daemon.track(topic_names.join(","), lang: "en") do |status|
-
-  begin
+client.track(topic_names.join(","), lang: "en") do |status|
 
   if status.kind_of? Twitter::Tweet
 
@@ -38,9 +36,5 @@ daemon.track(topic_names.join(","), lang: "en") do |status|
 
     end
 
-  end
-
-  rescue Exception => e
-    puts e
   end
 end

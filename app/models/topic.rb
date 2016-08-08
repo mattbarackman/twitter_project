@@ -11,15 +11,6 @@ class Topic < ActiveRecord::Base
   has_many :topics_hashtags, :dependent => :destroy
   has_many :hashtags, :through => :topics_hashtags
 
-  def self.streaming(command)
-    raise ArguementError unless ['restart', 'start', 'stop', 'status'].include? command
-    if any?
-      system("ruby #{TWEET_STREAM_DAEMON_PATH} #{command}")
-    else
-      p "No topics were found."
-    end
-  end
-
   def recent_occurrence_count
     occurrences.since(1.hour.ago).count
   end
