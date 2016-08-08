@@ -23,7 +23,7 @@ namespace :topics do
               twitter_id: status.id,
               tweeted_at: status.created_at.to_s,
               full_text: full_text,
-              user_mentions: user_mentions,
+              usernames: user_mentions,
               hashtags: hashtags,
               urls: urls
             }

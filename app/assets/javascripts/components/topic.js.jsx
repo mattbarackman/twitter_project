@@ -5,7 +5,7 @@ var Topic = React.createClass({
     value: React.PropTypes.string,
     mentions: React.PropTypes.number,
     topUrls: React.PropTypes.array,
-    topUserMentions: React.PropTypes.array,
+    topUsernames: React.PropTypes.array,
     topHashtags: React.PropTypes.array
   },
 
@@ -44,7 +44,7 @@ var Topic = React.createClass({
             <div>Mentions: {this.state.data.mentions}</div>
           </div>
           <div className="col-md-3">
-            <List title="Top User Mentions" listItems={this.state.data.topUserMentions}></List>
+            <List title="Top Usernames" listItems={this.state.data.topUsernames}></List>
           </div>
           <div className="col-md-3">
             <List title="Top Hashtags" listItems={this.state.data.topHashtags}></List>
