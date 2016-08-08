@@ -1,8 +1,9 @@
 namespace :topics do
 
+  desc "Stream tweets and store occurrences for existing topics."
   task :stream => :environment do |t, args|
-    client = TweetStream::Client.new
 
+    client = TweetStream::Client.new
     topic_names = Topic.all.pluck(:value)
 
     client.track(topic_names.join(","), lang: "en") do |status|
@@ -38,6 +39,7 @@ namespace :topics do
     end
   end
 
+  desc "Delete old occurrence records to save space."
   task :delete_old_occurrences => :environment do
     Occurrence.delete_old
   end

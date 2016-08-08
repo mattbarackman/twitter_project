@@ -23,27 +23,27 @@ class Topic < ActiveRecord::Base
     end
   end
 
-  def top_recent_hashtags(timeAgo = 1.hour.ago, n = 10)
+  def top_recent_hashtags
     hashtag_occurrences
-      .since(timeAgo)
-      .top(n)
+      .recent
+      .top
   end
 
-  def top_recent_urls(timeAgo = 1.hour.ago, n = 10)
+  def top_recent_urls
     url_occurrences
-      .since(timeAgo)
-      .top(n)
+      .recent
+      .top
   end
 
-  def top_recent_usernames(timeAgo = 1.hour.ago, n = 10)
+  def top_recent_usernames
     username_occurrences
-      .since(timeAgo)
-      .top(n)
+      .recent
+      .top
   end
 
-  def recent_tweet_count(timeAgo = 1.hour.ago)
+  def recent_tweet_count
     tweet_occurrences
-      .since(timeAgo)
+      .recent
       .count
   end
 
