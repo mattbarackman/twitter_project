@@ -4,7 +4,7 @@ source 'https://rubygems.org'
 gem 'rails', '~> 5.0.0'
 
 # persistence
-gem 'sqlite3'
+gem 'pg'
 gem 'redis', '~> 3.0'
 gem 'redis-rails'
 gem 'redis-persistence'
@@ -29,11 +29,10 @@ gem 'jbuilder', '~> 2.5'
 gem 'twitter'
 gem 'tweetstream'
 
-# NLP
-gem 'stopwords-filter', require: 'stopwords'
-
 # Background Jobs
 gem 'sidekiq'
+
+gem 'whenever', require: false
 
 group :development, :test do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console

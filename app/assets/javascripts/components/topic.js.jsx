@@ -2,10 +2,10 @@ var Topic = React.createClass({
 
   propTypes: {
     id: React.PropTypes.number,
-    name: React.PropTypes.string,
+    value: React.PropTypes.string,
     mentions: React.PropTypes.number,
     topUrls: React.PropTypes.array,
-    topUsers: React.PropTypes.array,
+    topUserMentions: React.PropTypes.array,
     topHashtags: React.PropTypes.array
   },
 
@@ -32,7 +32,7 @@ var Topic = React.createClass({
 
  componentDidMount: function() {
     this.loadTopicFromServer();
-    setInterval(this.loadTopicFromServer, 2000);
+    setInterval(this.loadTopicFromServer, 500);
   },
 
   render: function() {
@@ -40,11 +40,11 @@ var Topic = React.createClass({
       <div className="row">
         <div className="row">
           <div className="col-md-3">
-            <h1>{this.props.name}</h1>
+            <h1>{this.props.value}</h1>
             <div>Mentions: {this.state.data.mentions}</div>
           </div>
           <div className="col-md-3">
-            <List title="Top Users" listItems={this.state.data.topUsers}></List>
+            <List title="Top User Mentions" listItems={this.state.data.topUserMentions}></List>
           </div>
           <div className="col-md-3">
             <List title="Top Hashtags" listItems={this.state.data.topHashtags}></List>

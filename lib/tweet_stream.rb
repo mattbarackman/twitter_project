@@ -3,62 +3,44 @@ require File.join(root, 'config', 'environment')
 
 log = File.join(root, 'log', 'stream.log')
 
-topic_names = ARGV[1].split(",")
+daemon = TweetStream::Daemon.new("tweet_streamer", log_output: true)
 
-topics = Topic.where(name: topic_names)
+topic_names = Topic.all.pluck(:value)
 
-if topics.any? && topics.length == topic_names.length
-  daemon = TweetStream::Daemon.new("streaming_daemon_" + topics.map(&:id).join("_"))
-  daemon.track(topic_names) do |status|
-    if status.kind_of? Twitter::Tweet
-      user_mentions = status.user_mentions.map(&:screen_name)
-      hashtags = status.hashtags.map(&:text)
-      urls = status.uris.select(&:expanded_url?).map(&:expanded_url).map(&:to_s)
+daemon.track(topic_names.join(","), lang: "en") do |status|
 
-      matching_topics = user_mentions & topic_names
+  begin
 
-      matching_topics.each do |topic_name|
+  if status.kind_of? Twitter::Tweet
 
-        topic = Topic.find_by_name(topic_name)
+    user_mentions = status.user_mentions.map(&:screen_name)
+    full_text = status.full_text
+    hashtags = status.hashtags.map(&:text)
+    urls = status.uris.select(&:expanded_url?).map(&:expanded_url).map(&:to_s)
 
-        tweet = Tweet.create(
-          text: status.text,
-          topic_id: topic.id,
+    topic_names.each do |topic_name|
+
+      if full_text.include?(topic_name)
+
+        tweet_info = {
+          topic_name: topic_name,
+          twitter_id: status.id,
+          tweeted_at: status.created_at.to_s,
+          full_text: full_text,
+          user_mentions: user_mentions,
           hashtags: hashtags,
-          users: user_mentions,
           urls: urls
-        )
-        TweetJob.perform_later(tweet.id)
+        }
+
+        TweetJob.perform_later(tweet_info)
+
       end
+
     end
+
+  end
+
+  rescue Exception => e
+    puts e
   end
 end
-
-  # topic_names = ["@HillaryClinton", "@realDonaldTrump", "@BernieSanders"]
-
-  # client = TweetStream::Client.new
-  # client.track(topic_names) do |status|
-  #   if status.kind_of? Twitter::Tweet
-  #     user_mentions = status.user_mentions.map(&:screen_name)
-  #     hashtags = status.hashtags.map(&:text)
-  #     urls = status.uris.select(&:expanded_url?).map(&:expanded_url).map(&:to_s)
-
-  #     matching_topics = user_mentions.map{|um| "@" + um} & topic_names
-
-  #     p status.created_at.class
-
-  #     matching_topics.each do |topic_name|
-
-  #       topic = Topic.find_by_name(topic_name)
-
-  #       tweet = Tweet.create(
-  #         text: status.text,
-  #         topic_id: topic.id,
-  #         hashtags: hashtags,
-  #         users: user_mentions,
-  #         urls: urls
-  #       )
-  #       TweetJob.perform_later(tweet.id)
-  #     end
-  #   end
-  # end
