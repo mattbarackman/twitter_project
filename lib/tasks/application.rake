@@ -41,7 +41,7 @@ namespace :topics do
 
   desc "Delete old occurrence records to save space."
   task :delete_old_occurrences => :environment do
-    Occurrence.delete_old
+    Occurrence.old.destroy_all
   end
 
 end

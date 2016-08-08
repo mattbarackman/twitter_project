@@ -10,6 +10,10 @@ class Occurrence < ActiveRecord::Base
     where("occurrences.tweeted_at >= '#{TTL.ago}'")
   end
 
+  def self.old
+    where("occurrences.tweeted_at < '#{TTL.ago}'")
+  end
+
   def self.top(n = 10)
     select('count(*) as count, value')
       .group(:value)
@@ -29,10 +33,6 @@ class Occurrence < ActiveRecord::Base
 
   def self.top_recent
     recent.top
-  end
-
-  def self.delete_old
-    where("tweeted_at < '#{TTL.ago}'").destroy_all
   end
 
 end
