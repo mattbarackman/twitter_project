@@ -18,34 +18,34 @@ class Topic < ActiveRecord::Base
   def top_recent_hashtags(n = 10)
     topics_hashtags.
       with_recent_occurrences.
-      group(:hashtag).
-      count.
-      sort_by{|r| [r[1], r[0].value]}.
-      last(n).
-      reverse.
-      map{|result| result[0].as_json.merge({"count" => result[1]})}
+      select('count(*) as count, hashtag_id').
+      group('hashtag_id').
+      order('count DESC').
+      limit(n).map do |topics_hashtag|
+        topics_hashtag.hashtag.as_json.merge(count: topics_hashtag.count)
+      end
   end
 
   def top_recent_urls(n = 10)
     topics_urls.
       with_recent_occurrences.
-      group(:url).
-      count.
-      sort_by{|r| [r[1], r[0].value]}.
-      last(n).
-      reverse.
-      map{|result| result[0].as_json.merge({"count" => result[1]})}
+      select('count(*) as count, url_id').
+      group('url_id').
+      order('count DESC').
+      limit(n).map do |topics_url|
+        topics_url.url.as_json.merge(count: topics_url.count)
+      end
   end
 
   def top_recent_user_mentions(n = 10)
     topics_user_mentions.
       with_recent_occurrences.
-      group(:user_mention).
-      count.
-      sort_by{|r| [r[1], r[0].value]}.
-      last(n).
-      reverse.
-      map{|result| result[0].as_json.merge({"count" => result[1]})}
+      select('count(*) as count, user_mention_id').
+      group('user_mention_id').
+      order('count DESC').
+      limit(n).map do |topics_user_mention|
+        topics_user_mention.user_mention.as_json.merge(count: topics_user_mention.count)
+      end
   end
 
   def as_json(root = false)
