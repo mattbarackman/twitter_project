@@ -10,12 +10,12 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160808234057) do
+ActiveRecord::Schema.define(version: 20160809003144) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
-  create_table "occurrences", force: :cascade do |t|
+  create_table "occurrences", id: :bigserial, force: :cascade do |t|
     t.string   "type"
     t.datetime "tweeted_at"
     t.datetime "created_at", null: false
