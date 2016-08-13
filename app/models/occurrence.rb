@@ -2,9 +2,9 @@ class Occurrence < ApplicationRecord
 
   TTL = 1.hour
 
-  validates_presence_of :value, :tweeted_at
-
   belongs_to :topic
+
+  validates_presence_of :topic, :value, :tweeted_at
 
   def self.recent
     where("occurrences.tweeted_at >= '#{TTL.ago}'")

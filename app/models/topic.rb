@@ -7,7 +7,6 @@ class Topic < ApplicationRecord
 
   validates_presence_of :value
 
-
   def process_tweet!(tweet_info)
     tweeted_at = tweet_info[:tweeted_at]
 
