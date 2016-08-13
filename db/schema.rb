@@ -10,22 +10,23 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160809003144) do
+ActiveRecord::Schema.define(version: 20160807201405) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
+  enable_extension "uuid-ossp"
 
-  create_table "occurrences", id: :bigserial, force: :cascade do |t|
+  create_table "occurrences", id: :uuid, default: -> { "uuid_generate_v4()" }, force: :cascade do |t|
+    t.uuid     "topic_id"
     t.string   "type"
+    t.string   "value"
     t.datetime "tweeted_at"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.string   "value"
-    t.integer  "topic_id"
     t.index ["topic_id", "type"], name: "index_occurrences_on_topic_id_and_type", using: :btree
   end
 
-  create_table "topics", force: :cascade do |t|
+  create_table "topics", id: :uuid, default: -> { "uuid_generate_v4()" }, force: :cascade do |t|
     t.string   "value"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
