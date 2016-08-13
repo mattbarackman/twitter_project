@@ -58,6 +58,3 @@ As all number reflect the total counts for the last hour in real-time, the count
 ## To Do:
 
 1. Write javascript tests
-2. Solve problem of running out of space for Occurrence ids.
-  - These ids will keep incrementing until the id value is too large for the id field type (integer).
-  - I think this will involve using something like a UUID instead of an integer, as they can represent an almost infinite number of unique values using relatively limited space.
