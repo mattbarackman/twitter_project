@@ -1,9 +1,9 @@
 var Topic = React.createClass({
 
   propTypes: {
-    id: React.PropTypes.number,
+    id: React.PropTypes.string,
     value: React.PropTypes.string,
-    link: React.PropTypes.link,
+    link: React.PropTypes.string,
     mentions: React.PropTypes.number,
     topUrls: React.PropTypes.array,
     topUsernames: React.PropTypes.array,
